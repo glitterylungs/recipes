@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'theme/color_schemes.dart';
-import 'screens/recipe_list.dart';
+import 'list/recipe_list.dart';
 
 void main() {
   runApp(const MyApp());
