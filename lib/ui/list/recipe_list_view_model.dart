@@ -11,7 +11,7 @@ class RecipeViewModel {
   Future<List<Recipe>> getAllRecipes() async {
     // Implement logic to fetch all recipes from your service.
     // For now, we'll return an empty list as a placeholder.
-    _cachedRecipes = await _recipeService.fetchAllRecipes();
+    _cachedRecipes = await _recipeService.fetchAllRecipes(number: 200);
     return _cachedRecipes;
   }
 
