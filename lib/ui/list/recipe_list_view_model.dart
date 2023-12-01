@@ -1,5 +1,5 @@
 import 'package:recipes/service/model/recipe.dart';
-import 'package:recipes/service/wojtek.dart';
+import 'package:recipes/service/RecipeService.dart';
 
 class RecipeViewModel {
   final RecipeService _recipeService = RecipeService();

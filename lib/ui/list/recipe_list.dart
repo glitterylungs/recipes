@@ -22,10 +22,11 @@ class _RecipeListState extends State<RecipeList> {
     _recipeListFuture = _recipeViewModel.getAllRecipes();
   }
 
-  void filterRecipes(String query) {
+  void filterRecipes(String query) async {
     if (query.isEmpty) {
+      List<Recipe> allRecipes = await _recipeViewModel.getAllRecipes();
       setState(() {
-        _filteredRecipes = [];
+        _filteredRecipes = allRecipes;
       });
     } else {
       _recipeViewModel.getRecipesByQuery(query).then((recipes) {
@@ -99,41 +100,15 @@ class _RecipeListState extends State<RecipeList> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: Stack(
-                      children: [
-                        Positioned.fill(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                            child: Image.network(
-                              recipe.url,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          recipe.name,
+                          style: Theme.of(context).textTheme.headline6,
+                          textAlign: TextAlign.center,
                         ),
-                        Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 10,
-                          child: Container(
-                            padding: const EdgeInsets.all(8.0),
-                            decoration: BoxDecoration(
-                              borderRadius: const BorderRadius.only(
-                                bottomLeft: Radius.circular(16),
-                                topRight: Radius.circular(50),
-                              ),
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .surface
-                                  .withOpacity(0.9),
-                            ),
-                            child: Text(
-                              recipe.name,
-                              style: Theme.of(context).textTheme.labelMedium,
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 );
@@ -210,6 +185,12 @@ class RecipeSearchDelegate extends SearchDelegate<String> {
                 title: Text(recipe.name),
                 onTap: () {
                   close(context, recipe.name);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RecipeDetailsScreen(recipe: recipe),
+                    ),
+                  );
                 },
               );
             },
