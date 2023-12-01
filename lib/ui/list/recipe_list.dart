@@ -100,41 +100,17 @@ class _RecipeListState extends State<RecipeList> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: Stack(
-                      children: [
-                        // Positioned.fill(
-                        //   child: ClipRRect(
-                        //     borderRadius: BorderRadius.circular(16),
-                        //     child: Image.network(
-                        //       recipe.url,
-                        //       width: double.infinity,
-                        //       fit: BoxFit.cover,
-                        //     ),
-                        //   ),
-                        // ),
-                        Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 10,
-                          child: Container(
-                            padding: const EdgeInsets.all(8.0),
-                            decoration: BoxDecoration(
-                              borderRadius: const BorderRadius.only(
-                                bottomLeft: Radius.circular(16),
-                                topRight: Radius.circular(50),
-                              ),
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .surface
-                                  .withOpacity(0.9),
-                            ),
-                            child: Text(
-                              recipe.name,
-                              style: Theme.of(context).textTheme.labelMedium,
-                            ),
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          recipe.name,
+                          style: TextStyle(
+                            fontSize: 40, // Adjust the font size as needed
                           ),
+                          textAlign: TextAlign.center,
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 );

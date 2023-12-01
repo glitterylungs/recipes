@@ -54,6 +54,19 @@ class RecipeDetailsScreen extends StatelessWidget {
                   children:
                       recipe.method.map((method) => Text('- $method')).toList(),
                 ),
+                SizedBox(height: 16),
+
+                Text(
+                  'Source:',
+                  style: Theme.of(context).textTheme.headline6,
+                ),
+                Text(
+                  recipe.url,
+                  style: TextStyle(
+                    color: Colors.blue,
+                    decoration: TextDecoration.none,
+                  ),
+                ),
               ],
             ),
           ),

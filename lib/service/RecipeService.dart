@@ -26,8 +26,8 @@ class RecipeService {
   Future<List<Recipe>> fetchAllRecipes({int number = 200}) async {
     await _init();
 
+    _recipes.shuffle();
     var recipes = _recipes.take(number).toList();
-    print(recipes.first.url);
     return recipes;
   }
 
