@@ -3,7 +3,6 @@ import 'package:recipes/service/model/recipe.dart';
 import 'dart:convert';
 import 'dart:io';
 
-// Dummy RecipeService class, replace this with your actual service.
 class RecipeService {
   List<Recipe> _recipes = [];
 
@@ -12,9 +11,8 @@ class RecipeService {
   }
 
   Future<void> _init() async {
-    String data = await rootBundle.loadString('recipes.json');
+    String data = await rootBundle.loadString('assets/recipes.json');
     final jsonResult = json.decode(data);
-    List<Recipe> recipes = [];
     var id = 0;
     for (var recipe in jsonResult) {
       _recipes.add(Recipe.fromJSON(id, recipe));
@@ -26,11 +24,16 @@ class RecipeService {
   }
 
   Future<List<Recipe>> fetchAllRecipes({int number = 200}) async {
-    var recipes = _recipes.sublist(0, number);
+    await _init();
+
+    var recipes = _recipes.take(number).toList();
+    print(recipes.first.url);
     return recipes;
   }
 
   Future<List<Recipe>> searchRecipes(String query) async {
+    await _init();
+
     var recipes = _recipes.where((recipe) {
       return recipe.name.toLowerCase().contains(query.toLowerCase());
     }).toList();

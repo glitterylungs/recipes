@@ -22,10 +22,11 @@ class _RecipeListState extends State<RecipeList> {
     _recipeListFuture = _recipeViewModel.getAllRecipes();
   }
 
-  void filterRecipes(String query) {
+  void filterRecipes(String query) async {
     if (query.isEmpty) {
+      List<Recipe> allRecipes = await _recipeViewModel.getAllRecipes();
       setState(() {
-        _filteredRecipes = [];
+        _filteredRecipes = allRecipes;
       });
     } else {
       _recipeViewModel.getRecipesByQuery(query).then((recipes) {
@@ -101,16 +102,16 @@ class _RecipeListState extends State<RecipeList> {
                     ),
                     child: Stack(
                       children: [
-                        Positioned.fill(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                            child: Image.network(
-                              recipe.url,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
+                        // Positioned.fill(
+                        //   child: ClipRRect(
+                        //     borderRadius: BorderRadius.circular(16),
+                        //     child: Image.network(
+                        //       recipe.url,
+                        //       width: double.infinity,
+                        //       fit: BoxFit.cover,
+                        //     ),
+                        //   ),
+                        // ),
                         Positioned(
                           bottom: 0,
                           left: 0,
@@ -210,6 +211,12 @@ class RecipeSearchDelegate extends SearchDelegate<String> {
                 title: Text(recipe.name),
                 onTap: () {
                   close(context, recipe.name);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RecipeDetailsScreen(recipe: recipe),
+                    ),
+                  );
                 },
               );
             },
