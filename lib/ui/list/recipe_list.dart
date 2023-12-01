@@ -4,33 +4,28 @@ import 'package:recipes/ui/details/recipe_details.dart';
 import 'package:recipes/ui/list/recipe_list_view_model.dart';
 
 class RecipeList extends StatefulWidget {
-  RecipeList({Key? key}) : super(key: key);
+  const RecipeList({Key? key}) : super(key: key);
 
   @override
   _RecipeListState createState() => _RecipeListState();
 }
 
 class _RecipeListState extends State<RecipeList> {
-  late RecipeViewModel _recipeViewModel; // Your view model instance
+  late RecipeViewModel _recipeViewModel;
   late Future<List<Recipe>> _recipeListFuture;
   List<Recipe> _filteredRecipes = [];
 
   @override
   void initState() {
     super.initState();
-    _recipeViewModel = RecipeViewModel(); // Initialize your view model
+    _recipeViewModel = RecipeViewModel();
     _recipeListFuture = _recipeViewModel.getAllRecipes();
-    _recipeListFuture.then((recipes) {
-      setState(() {
-        _filteredRecipes = recipes;
-      });
-    });
   }
 
   void filterRecipes(String query) {
     if (query.isEmpty) {
       setState(() {
-        _filteredRecipes = _recipeViewModel.getCachedRecipes();
+        _filteredRecipes = [];
       });
     } else {
       _recipeViewModel.getRecipesByQuery(query).then((recipes) {
@@ -49,7 +44,7 @@ class _RecipeListState extends State<RecipeList> {
         title: const Text("Plate Craft"),
         actions: [
           IconButton(
-            icon: Icon(Icons.search),
+            icon: const Icon(Icons.search),
             onPressed: () async {
               final String? query = await showSearch<String>(
                 context: context,
@@ -66,15 +61,26 @@ class _RecipeListState extends State<RecipeList> {
         future: _recipeListFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           } else if (snapshot.hasError) {
             return Center(
               child: Text('Error: ${snapshot.error}'),
             );
+          } else if (snapshot.data == null || snapshot.data!.isEmpty) {
+            return const Center(
+              child: Text('No recipes found.'),
+            );
           } else {
-            return ListView.builder(
+            _filteredRecipes = snapshot.data!;
+            return GridView.builder(
+              padding: const EdgeInsets.only(top: 10.0),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2, // Set the number of columns here
+                crossAxisSpacing: 8.0,
+                mainAxisSpacing: 8.0,
+              ),
               itemCount: _filteredRecipes.length,
               itemBuilder: (context, index) {
                 Recipe recipe = _filteredRecipes[index];
@@ -89,20 +95,42 @@ class _RecipeListState extends State<RecipeList> {
                     );
                   },
                   child: Card(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Stack(
                       children: [
-                        Image.network(
-                          recipe.url,
-                          height: 150,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
+                        Positioned.fill(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: Image.network(
+                              recipe.url,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            recipe.name,
-                            style: Theme.of(context).textTheme.headline6,
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 10,
+                          child: Container(
+                            padding: const EdgeInsets.all(8.0),
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.only(
+                                bottomLeft: Radius.circular(16),
+                                topRight: Radius.circular(50),
+                              ),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surface
+                                  .withOpacity(0.9),
+                            ),
+                            child: Text(
+                              recipe.name,
+                              style: Theme.of(context).textTheme.labelMedium,
+                            ),
                           ),
                         ),
                       ],
@@ -127,7 +155,7 @@ class RecipeSearchDelegate extends SearchDelegate<String> {
   List<Widget> buildActions(BuildContext context) {
     return [
       IconButton(
-        icon: Icon(Icons.clear),
+        icon: const Icon(Icons.clear),
         onPressed: () {
           query = '';
         },
@@ -138,7 +166,7 @@ class RecipeSearchDelegate extends SearchDelegate<String> {
   @override
   Widget buildLeading(BuildContext context) {
     return IconButton(
-      icon: Icon(Icons.arrow_back),
+      icon: const Icon(Icons.arrow_back),
       onPressed: () {
         close(context, '');
       },
@@ -160,15 +188,19 @@ class RecipeSearchDelegate extends SearchDelegate<String> {
       future: _recipeViewModel.getRecipesByQuery(query),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(),
           );
         } else if (snapshot.hasError) {
           return Center(
             child: Text('Error: ${snapshot.error}'),
           );
+        } else if (snapshot.data == null || snapshot.data!.isEmpty) {
+          return const Center(
+            child: Text('No recipes found.'),
+          );
         } else {
-          final List<Recipe> searchResults = snapshot.data ?? [];
+          final List<Recipe> searchResults = snapshot.data!;
 
           return ListView.builder(
             itemCount: searchResults.length,
