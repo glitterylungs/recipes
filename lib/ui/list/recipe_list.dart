@@ -105,9 +105,7 @@ class _RecipeListState extends State<RecipeList> {
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
                           recipe.name,
-                          style: TextStyle(
-                            fontSize: 40, // Adjust the font size as needed
-                          ),
+                          style: Theme.of(context).textTheme.headline6,
                           textAlign: TextAlign.center,
                         ),
                       ),
